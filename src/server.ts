@@ -1,6 +1,18 @@
+import "dotenv/config";
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+
+const redmineBaseUrl = process.env.REDMINE_BASE_URL;
+const redmineApiKey = process.env.REDMINE_API_KEY;
+
+if (!redmineBaseUrl) {
+    throw new Error("REDMINE_BASE_URL環境変数が設定されていません。");
+}
+
+if (!redmineApiKey) {
+    throw new Error("REDMINE_API_KEY環境変数が設定されていません。");
+}
 
 const server = new McpServer({
     name: "redmine-mcp-server",
