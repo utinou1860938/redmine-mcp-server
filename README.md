@@ -1,0 +1,4 @@
+# RedmineMCPサーバー
+
+## 概要
+RedmineMCPサーバーは、AIエージェントがRedmineAPIを使用してRedmineプロジェクト管理ツールと連携するためのサーバーです。これにより、AIエージェントはRedmineのタスク管理やプロジェクト管理機能を活用できます。
