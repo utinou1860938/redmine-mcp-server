@@ -1,0 +1,8 @@
+# envファイル（絶対にコミットしない）
+.env
+
+# node_modules（依存関係）
+node_modules/
+
+# ビルド成果物
+dist/
