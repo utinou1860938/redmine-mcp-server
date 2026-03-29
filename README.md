@@ -11,33 +11,57 @@ npm install
 ```
 
 ### 2. 環境変数の設定
-`.env.example` をコピーして `.env` を作成し、値を設定してください。
+
+#### 方法A: macOS Keychain を使う（推奨）
+
+API キーをディスクに平文で保存せず、macOS Keychain で安全に管理します。
+
+**Step 1: REDMINE_BASE_URL を ~/.zshrc に登録**
 
 ```bash
-cp .env.example .env
+echo 'export REDMINE_BASE_URL="https://tech-saisoncard.cloudmine.jp"' >> ~/.zshrc
+source ~/.zshrc
 ```
 
+**Step 2: REDMINE_API_KEY を Keychain に登録**
+
+```bash
+# 対話形式で登録（API キーがシェル履歴に残らない）
+security add-generic-password -s "redmine-api-key" -a "$USER" -w
+# → プロンプトが表示されたら API キーを貼り付けて Enter
 ```
-REDMINE_BASE_URL=https://your-redmine.com
-REDMINE_API_KEY=your-api-key
+
+登録確認：
+```bash
+security find-generic-password -s "redmine-api-key" -w
+```
+
+**Step 3: Claude Code の起動**
+
+毎回 Keychain から API キーを取得して起動します：
+
+```bash
+REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude
+```
+
+便利なエイリアスを設定しておくと楽です：
+
+```bash
+# ~/.zshrc に追加
+alias claude-redmine='REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude'
+```
+
+**Keychain の管理コマンド**
+
+```bash
+# 削除
+security delete-generic-password -s "redmine-api-key"
+
+# 再登録
+security add-generic-password -s "redmine-api-key" -a "$USER" -w
 ```
 
 ## 起動方法（YuMeeの場合）
-
-### 開発モード（手動起動
-```bash
-npm run dev -- --project=yumee
-```
-
-プロジェクトは識別子（例: `yumee`）でも数値ID（例: `401`）でも指定可能です。
-
-### 本番モード
-```bash
-npm run build
-npm run start -- --project=yumee
-```
-
-## Claude Codeとの連携
 
 Claude Codeから使用するには、`.mcp.json` または `~/.claude/settings.json` に設定を追加します。
 
@@ -55,23 +79,6 @@ Claude Codeから使用するには、`.mcp.json` または `~/.claude/settings.
   }
 }
 ```
-
-### グローバル設定（~/.claude/settings.json）
-どのプロジェクトからでも使いたい場合：
-
-```json
-{
-  "mcpServers": {
-    "redmine": {
-      "command": "npx",
-      "args": ["tsx", "/path/to/redmine-mcp-saerver/src/server.ts", "--", "--project=yumee"],
-      "cwd": "/path/to/redmine-mcp-saerver"
-    }
-  }
-}
-```
-
-設定後、Claude Codeを再起動するとツールが使用可能になります。
 
 ## 利用可能なツール
 
