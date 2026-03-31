@@ -40,21 +40,6 @@ security add-generic-password -s "redmine-api-key" -a "$USER" -w
 security find-generic-password -s "redmine-api-key" -w
 ```
 
-**Step 3: Claude Code の起動**
-
-毎回 Keychain から API キーを取得して起動します：
-
-```bash
-REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude
-```
-
-便利なエイリアスを設定しておくと楽です：
-
-```bash
-# ~/.zshrc に追加
-alias claude-redmine='REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude'
-```
-
 **Keychain の管理コマンド**
 
 ```bash
@@ -65,12 +50,9 @@ security delete-generic-password -s "redmine-api-key"
 security add-generic-password -s "redmine-api-key" -a "$USER" -w
 ```
 
-## 起動方法（YuMeeの場合）
+### 3. MCP設定（.mcp.json）
 
-Claude Codeから使用するには、`.mcp.json` または `~/.claude/settings.json` に設定を追加します。
-
-### プロジェクトローカル設定（.mcp.json）
-対象プロジェクトのルートに `.mcp.json` を作成：
+Claude Codeから使用するには、対象プロジェクトのルートに `.mcp.json` を作成します：
 
 ```json
 {
@@ -82,6 +64,21 @@ Claude Codeから使用するには、`.mcp.json` または `~/.claude/settings.
     }
   }
 }
+```
+
+### 4. Claude Code の起動
+
+Keychain から API キーを取得して起動します：
+
+```bash
+REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude
+```
+
+便利なエイリアスを設定しておくと楽です：
+
+```bash
+# ~/.zshrc に追加
+alias claude-redmine='REDMINE_API_KEY=$(security find-generic-password -s "redmine-api-key" -w) claude'
 ```
 
 ## 利用可能なツール
@@ -165,4 +162,4 @@ Redmineのチケットをキーワードで検索します。
 
 - `--project` で指定したプロジェクト以外のチケットにはアクセスできません
 - 起動時にプロジェクトの存在確認を行い、存在しない場合はエラーで終了します
-- 環境変数（APIキー等）は `.env` ファイルで管理し、gitにコミットしないでください
+- APIキーは macOS Keychain で管理することを推奨します（「環境変数の設定」参照）
